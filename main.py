@@ -104,6 +104,7 @@ def dump_vividseats(save_file, excel_headers):
 
 while True:
     current_time = datetime.now()
+    print(f"current time: {current_time}")
     if current_time.hour == target_time:
         #############scrape vividseat data
         scrape(url_vividseat, file_vividseat)
