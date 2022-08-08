@@ -145,5 +145,5 @@ while True:
         
         print("Xlsx Sent")
     else:
-        print("Target time not met")
+        print(f"Target time of {target_time} not met")
     time.sleep(delay)
