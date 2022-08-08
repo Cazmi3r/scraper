@@ -20,8 +20,7 @@ url_vividseat = 'https://www.vividseats.com/itzy-tickets-rosemont-rosemont-theat
 file_vividseat = "vividseat.html"
 excel_headers = ["price", "section type", "section number", "Row", "tickets avaliable"]
 delay = 3000 
-target_time = 19
-current_time = datetime.now()
+target_time = 3
 load_dotenv()
 email = environ.get("SCRAPE_RECEVING_EMAIL")
 #------------------Methods------------------#
@@ -102,7 +101,9 @@ def dump_vividseats(save_file, excel_headers):
     return df_clean_data
 
 #------------------Project Logic------------------#
+
 while True:
+    current_time = datetime.now()
     if current_time.hour == target_time:
         #############scrape vividseat data
         scrape(url_vividseat, file_vividseat)
