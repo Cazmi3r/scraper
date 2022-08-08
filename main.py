@@ -20,10 +20,10 @@ url_vividseat = 'https://www.vividseats.com/itzy-tickets-rosemont-rosemont-theat
 file_vividseat = "vividseat.html"
 excel_headers = ["price", "section type", "section number", "Row", "tickets avaliable"]
 delay = 3000 
-target_time = 3
+target_time = 19
 current_time = datetime.now()
-email = environ.get("SCRAPE_RECEVING_EMAIL")
 load_dotenv()
+email = environ.get("SCRAPE_RECEVING_EMAIL")
 #------------------Methods------------------#
 def scrape(url, file):
     # setup the options for our webDriver
