@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from os import environ
 import ScrapeManager as sm
 
+# the goal of this class is to create a collection of parsing alagorithms
+# that can be passed to the a Scrape Manager object to seperate parsing logic
 class Parsers:
     def test(self):
         pass

@@ -5,6 +5,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 import re
 import time
+
+# goal of this class is to be able to scrape a site, parse it for a data set
+# and export that data set
+# maybe a ScrapeManager object should keep track of all of the data sets it has parsed
+# this way I could easily scrape and parse many sites quickly then compile them in some way
+# maybe it should be able to combine multiple data sets to create one output
 class ScrapeManager:
 #------------------Methods------------------#
     def scrape(self, url, file):
