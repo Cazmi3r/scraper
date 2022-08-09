@@ -10,19 +10,6 @@ import time
 from datetime import datetime
 from dotenv import load_dotenv
 from os import environ
-
-
-
-
-
-#------------------Variables------------------#
-url_vividseat = 'https://www.vividseats.com/itzy-tickets-rosemont-rosemont-theatre-11-7-2022--concerts-k-pop/production/4000042?AID=Performer-MainProductionList'
-file_vividseat = "vividseat.html"
-excel_headers = ["price", "section type", "section number", "Row", "tickets avaliable"]
-delay = 3000 
-target_time = 3
-load_dotenv()
-email = environ.get("SCRAPE_RECEVING_EMAIL")
 #------------------Methods------------------#
 def scrape(url, file):
     # setup the options for our webDriver
@@ -43,7 +30,7 @@ def scrape(url, file):
     save_file.write(html)
 
 # loads HTML from file into BeautifulSoup 
-def load_soup(file):
+def load_soup_from_file(file):
     html = open(file, "r").read()
     return BeautifulSoup(html, features="html.parser")
 
@@ -57,9 +44,10 @@ def get_divs(soup):
     return dirty_data
 
 # Get data dump from vividseats
+# TODO Make this Method Generic
 def dump_vividseats(save_file, excel_headers):
     # load HTML into Beautiful soup
-    soup = load_soup(save_file)
+    soup = load_soup_from_file(save_file)
     
     # clean data that will be returned at the end
     df_clean_data = pd.DataFrame(columns=excel_headers)
@@ -99,51 +87,3 @@ def dump_vividseats(save_file, excel_headers):
         df_to_append = pd.DataFrame(output, index=[0])
         df_clean_data = pd.concat([df_clean_data, df_to_append])  
     return df_clean_data
-
-#------------------Project Logic------------------#
-
-while True:
-    current_time = datetime.now()
-    print(f"current time: {current_time}")
-    if current_time.hour == target_time:
-        #############scrape vividseat data
-        scrape(url_vividseat, file_vividseat)
-        #############
-        
-        ##############Update Vividseat excel
-        df_vividseat = dump_vividseats(file_vividseat, excel_headers)
-        
-        # "ï¿½" appears in the data where "-" should be this fixes that.
-        df_vividseat["tickets avaliable"] = df_vividseat["tickets avaliable"].replace("ï¿½", "-", regex=True)
-        
-        df_vividseat.to_excel("vividseat.xlsx", index=False)
-        ##############
-
-        #############Create The Email
-        # Setup nylas api connection
-        nylas = APIClient(
-                        client_id=environ.get("NYLAS_CLIENT_ID"),
-                        client_secret=environ.get("NYLAS_CLIENT_SECRET"),
-                        access_token=environ.get("NYLAS_ACCESS_TOKEN")
-                        )
-        # Create your attachment
-        attachment = open("vividseat.xlsx", "rb")
-        attach = nylas.files.create()
-        attach.filename = 'vividseat.xlsx'
-        attach.stream = attachment
-        
-        # Draft your email and attach your file
-        draft = nylas.drafts.create()
-        draft.subject = "Ticket price update!"
-        draft.body = "Hi Baby! heres your ticket prices for the day! They currently reflect the prices seen at Vividseat. Let me know how I can improve this!"
-        draft.to = [{"name": "Mai Baby <3", "email": email}]
-        draft.attach(attach)
-        
-        # Send your email!
-        draft.send()
-        attachment.close()
-        
-        print("Xlsx Sent")
-    else:
-        print(f"Target time of {target_time} not met")
-    time.sleep(delay)
